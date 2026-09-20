@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="一个简洁、专注且支持回收站的本地 Todolist。">
+  <meta id="themeColorMeta" name="theme-color" content="#f4f7fb">
+  <title>简待办 · 简洁 Todolist</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="brand" href="#" aria-label="简待办首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M7 12.5 10.2 16 17.5 8.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span>
+          <span class="brand-kicker">专注当下</span>
+          <span class="brand-title">简待办</span>
+        </span>
+      </a>
+
+      <div class="header-actions">
+        <button class="icon-button" id="themeToggle" type="button" aria-label="切换到深色模式" title="切换主题">
+          <svg class="theme-icon icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20.2 15.3A8.5 8.5 0 0 1 8.7 3.8 8.5 8.5 0 1 0 20.2 15.3Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg class="theme-icon icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <button class="trash-button" id="trashOpenButton" type="button" aria-haspopup="dialog" aria-controls="trashDialog">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 7h16M9 7V4.8c0-.4.4-.8.8-.8h4.4c.4 0 .8.4.8.8V7m2 0-.7 12.1a1.8 1.8 0 0 1-1.8 1.7H8.5a1.8 1.8 0 0 1-1.8-1.7L6 7m4 4v5m4-5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>回收站</span>
+          <span class="count-badge" id="trashCount">0</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-card" aria-labelledby="todayLabel">
+        <div class="hero-top">
+          <div>
+            <p class="section-kicker">今日概览</p>
+            <h1 id="todayLabel">今天</h1>
+          </div>
+
+          <dl class="summary-stats">
+            <div>
+              <dt>待完成</dt>
+              <dd id="activeCount">0</dd>
+            </div>
+            <div>
+              <dt>已逾期</dt>
+              <dd id="overdueCount">0</dd>
+            </div>
+            <div>
+              <dt>高优先级</dt>
+              <dd id="highPriorityCount">0</dd>
+            </div>
+          </dl>
+        </div>
+
+        <form class="task-form" id="taskForm" novalidate>
+          <div class="title-field">
+            <label class="sr-only" for="taskTitle">任务名称</label>
+            <input id="taskTitle" name="title" type="text" maxlength="120" autocomplete="off" placeholder="准备做点什么？" required>
+          </div>
+
+          <div class="task-form-options">
+            <label class="compact-field" for="taskPriority">
+              <span>优先级</span>
+              <select id="taskPriority" name="priority">
+                <option value="high">高优先级</option>
+                <option value="medium" selected>中优先级</option>
+                <option value="low">低优先级</option>
+              </select>
+            </label>
+
+            <label class="compact-field" for="taskDueDate">
+              <span>截止日期</span>
+              <input id="taskDueDate" name="dueDate" type="date">
+            </label>
+
+            <button class="primary-button" type="submit">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              添加任务
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="task-section" aria-labelledby="taskSectionTitle">
+        <div class="list-heading">
+          <div>
+            <p class="section-kicker">待办清单</p>
+            <h2 id="taskSectionTitle">需要完成的事情</h2>
+          </div>
+          <p class="list-summary" id="activeSummary" aria-live="polite">目前没有待办</p>
+        </div>
+
+        <div class="task-list" id="taskList" role="list"></div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span class="footer-dot" aria-hidden="true"></span>
+      所有数据仅保存在当前浏览器中
+    </footer>
+  </div>
+
+  <dialog class="modal" id="editDialog" aria-labelledby="editDialogTitle">
+    <form class="modal-card" id="editForm" novalidate>
+      <div class="modal-header">
+        <div>
+          <p class="section-kicker">调整计划</p>
+          <h2 id="editDialogTitle">编辑任务</h2>
+        </div>
+        <button class="icon-button modal-close" id="editCloseButton" type="button" aria-label="关闭编辑窗口">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <label class="field" for="editTitle">
+          <span>任务名称</span>
+          <input id="editTitle" type="text" maxlength="120" autocomplete="off" required>
+        </label>
+
+        <div class="field-row">
+          <label class="field" for="editPriority">
+            <span>优先级</span>
+            <select id="editPriority">
+              <option value="high">高优先级</option>
+              <option value="medium">中优先级</option>
+              <option value="low">低优先级</option>
+            </select>
+          </label>
+
+          <label class="field" for="editDueDate">
+            <span>截止日期</span>
+            <input id="editDueDate" type="date">
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="secondary-button" id="editCancelButton" type="button">取消</button>
+        <button class="primary-button" type="submit">保存修改</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal trash-modal" id="trashDialog" aria-labelledby="trashDialogTitle">
+    <div class="modal-card trash-card">
+      <div class="modal-header">
+        <div>
+          <p class="section-kicker">误操作也没关系</p>
+          <h2 id="trashDialogTitle">回收站</h2>
+        </div>
+        <button class="icon-button modal-close" id="trashCloseButton" type="button" aria-label="关闭回收站">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="trash-tabs" role="tablist" aria-label="回收站分类">
+        <button class="trash-tab is-active" id="completedTab" type="button" role="tab" aria-selected="true" aria-controls="trashList" data-trash-tab="completed">
+          已完成
+          <span id="completedCount">0</span>
+        </button>
+        <button class="trash-tab" id="deletedTab" type="button" role="tab" aria-selected="false" aria-controls="trashList" data-trash-tab="deleted" tabindex="-1">
+          已删除
+          <span id="deletedCount">0</span>
+        </button>
+      </div>
+
+      <div class="trash-content">
+        <div class="task-list trash-list" id="trashList" role="list"></div>
+      </div>
+
+      <div class="modal-footer trash-footer">
+        <p>回收站中的任务会一直保留，直到你主动清空。</p>
+        <button class="danger-button" id="clearTrashButton" type="button">清空当前分类</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
