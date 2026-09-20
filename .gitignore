@@ -1,0 +1,107 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Editors and IDEs
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+*.local.*
+secrets.*
+*.pem
+*.key
+
+# Dependency directories
+node_modules/
+bower_components/
+jspm_packages/
+vendor/
+.pnp/
+.pnp.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+site-packages/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.eggs/
+*.egg-info/
+*.egg
+
+# JavaScript and TypeScript build output
+dist/
+build/
+out/
+coverage/
+.nyc_output/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.svelte-kit/
+.turbo/
+*.tsbuildinfo
+
+# Java, Kotlin, Gradle, and Maven
+.gradle/
+target/
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+
+# .NET and Visual Studio
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Go and Rust
+*.test
+*.prof
+Cargo.lock.orig
+
+# Logs, temporary files, and database artifacts
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+*.cache
+*.pid
+*.seed
+*.sqlite
+*.sqlite3
+*.db
+
+# Test and tooling output
+.junit/
+test-results/
+allure-results/
+playwright-report/
+blob-report/
